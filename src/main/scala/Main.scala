@@ -2,9 +2,9 @@ package com.example
 
 import com.example.config.SparkConfig
 import com.example.io.DataReader
-import com.example.transformations.DataCleaner
 import com.example.analysis._
 import com.example.traits.Computation
+import com.example.transformations.Nettoyage
 
 object Main {
   def main(args: Array[String]): Unit = {
@@ -17,7 +17,8 @@ object Main {
     println("=== Données originales ===")
     df.show(5)
 
-    val cleanedDf = DataCleaner.cleanData(df)
+    // Nettoyage des données
+    val cleanedDf = Nettoyage.nettoyer(df)(spark)
     println("=== Données nettoyées ===")
     cleanedDf.show()
 
