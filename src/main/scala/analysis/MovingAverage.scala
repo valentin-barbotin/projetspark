@@ -20,4 +20,3 @@ object MovingAverage extends Computation {
       .show(20, truncate = false)
   }
 }
-

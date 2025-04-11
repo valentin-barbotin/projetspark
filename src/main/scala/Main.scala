@@ -8,23 +8,19 @@ import com.example.traits.Computation
 
 object Main {
   def main(args: Array[String]): Unit = {
-    // Initialisation de Spark
     val spark = SparkConfig.createSparkSession()
     import spark.implicits._
 
-    // Lecture des données
     val csvPath = "dataset.csv"
     val df = DataReader.readCsv(spark, csvPath)
 
     println("=== Données originales ===")
     df.show(5)
 
-    // Nettoyage des données
     val cleanedDf = DataCleaner.cleanData(df)
     println("=== Données nettoyées ===")
     cleanedDf.show()
 
-    // Analyses
     val computations: Seq[Computation] = Seq(
       MovingAverage,
       Volatility,
@@ -47,13 +43,11 @@ object Main {
       onlyToday = true
     )(spark)
 
-    // Exemple de requête SQL
     cleanedDf.createOrReplaceTempView("stocks")
     val result = spark.sql("SELECT * FROM stocks WHERE Close > Open")
     println("=== Jours où Close > Open (via SQL) ===")
     result.show()
 
-    // Arrêt de la session Spark
     spark.stop()
   }
 }

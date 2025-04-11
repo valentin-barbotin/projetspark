@@ -14,7 +14,10 @@ object DataReader {
         .withColumn("Date", to_date($"Date", "yyyy-MM-dd"))
     } catch {
       case e: Exception =>
-        throw new RuntimeException(s"Erreur lors de la lecture du CSV : ${e.getMessage}")
+        throw new RuntimeException(
+          s"Erreur lors de la lecture du CSV : ${e.getMessage}"
+        )
     }
   }
 }
+

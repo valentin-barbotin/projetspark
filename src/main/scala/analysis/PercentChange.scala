@@ -23,4 +23,3 @@ object PercentChange extends Computation {
       .show(20, truncate = false)
   }
 }
-

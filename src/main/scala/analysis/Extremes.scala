@@ -18,4 +18,3 @@ object Extremes extends Computation {
         .getAs[String]("Date")}, Close: ${minClose.getAs[Double]("Close")}")
   }
 }
-

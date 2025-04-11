@@ -12,4 +12,3 @@ object BullishDays extends Computation {
     println(s"=== Nombre de jours haussiers (Close > Open) : $bullishDays")
   }
 }
-

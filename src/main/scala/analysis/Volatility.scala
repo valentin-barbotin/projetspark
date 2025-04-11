@@ -17,4 +17,3 @@ object Volatility extends Computation {
       .show(20, truncate = false)
   }
 }
-

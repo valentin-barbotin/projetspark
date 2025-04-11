@@ -13,4 +13,3 @@ object VolumeAnalysis extends Computation {
     maxVolumeDay.select("Date", "Volume").show(truncate = false)
   }
 }
-
