@@ -22,8 +22,15 @@ object Main {
     println("=== Données originales ===")
     df.show(5)
 
+    // Nettoyage des données
+    val cleanedDf = df.filter("Volume > 0 AND Close IS NOT NULL AND Open IS NOT NULL AND High IS NOT NULL AND Low IS NOT NULL")
+      .filter("High >= Low")
+
+    println("=== Données nettoyées ===")
+    cleanedDf.show()
+
     // Moyenne mobile sur 5 jours
-    val movingAvg = df.withColumn(
+    val movingAvg = cleanedDf.withColumn(
       "MovingAvg_Close",
       F.avg("Close").over(
         Window.orderBy("Date").rowsBetween(-4, 0)
@@ -34,29 +41,29 @@ object Main {
     movingAvg.select("Date", "Close", "MovingAvg_Close").show(20)
 
     // Volatilité (High - Low)
-    val volatility = df.withColumn("Volatility", $"High" - $"Low")
+    val volatility = cleanedDf.withColumn("Volatility", $"High" - $"Low")
 
     println("=== Volatilité (High - Low) ===")
     volatility.select("Date", "High", "Low", "Volatility").show(20)
 
     // Jour avec le plus grand volume
-    val maxVolumeDay = df.orderBy($"Volume".desc).limit(1)
+    val maxVolumeDay = cleanedDf.orderBy($"Volume".desc).limit(1)
     println("=== Jour avec le plus grand volume ===")
     maxVolumeDay.select("Date", "Volume").show()
 
     // Nombre de jours où le Close > Open
-    val bullishDays = df.filter($"Close" > $"Open").count()
+    val bullishDays = cleanedDf.filter($"Close" > $"Open").count()
     println(s"=== Nombre de jours haussiers (Close > Open) : $bullishDays")
 
     // Évolution en % du prix de clôture (d'un jour à l'autre)
     val windowSpec = Window.orderBy("Date")
-    val percentChange = df.withColumn("PrevClose", F.lag("Close", 1).over(windowSpec))
+    val percentChange = cleanedDf.withColumn("PrevClose", F.lag("Close", 1).over(windowSpec))
       .withColumn("Pct_Change", (($"Close" - $"PrevClose") / $"PrevClose") * 100)
 
     println("=== Variation quotidienne (%) du prix de clôture ===")
     percentChange.select("Date", "Close", "PrevClose", "Pct_Change").show(20)
 
-    df.createOrReplaceTempView("stocks")
+    cleanedDf.createOrReplaceTempView("stocks")
 
     val result = spark.sql("SELECT * FROM stocks WHERE Close > Open")
     result.show()
@@ -64,3 +71,4 @@ object Main {
     spark.stop()
   }
 }
+
