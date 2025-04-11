@@ -63,6 +63,13 @@ object Main {
     println("=== Variation quotidienne (%) du prix de clôture ===")
     percentChange.select("Date", "Close", "PrevClose", "Pct_Change").show(20)
 
+    // Trouver la valeur maximale et minimale de 'Close' et leurs dates
+    val maxClose = cleanedDf.orderBy(F.desc("Close")).select("Date", "Close").first()
+    val minClose = cleanedDf.orderBy(F.asc("Close")).select("Date", "Close").first()
+
+    println(s"=== Valeur maximale ===\nDate: ${maxClose.getAs[String]("Date")}, Close: ${maxClose.getAs[Double]("Close")}")
+    println(s"=== Valeur minimale ===\nDate: ${minClose.getAs[String]("Date")}, Close: ${minClose.getAs[Double]("Close")}")
+
     cleanedDf.createOrReplaceTempView("stocks")
 
     val result = spark.sql("SELECT * FROM stocks WHERE Close > Open")
