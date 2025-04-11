@@ -1,7 +1,7 @@
 package com.example.analysis
 
 import org.apache.spark.sql.{DataFrame, SparkSession}
-import org.apache.spark.sql.functions.{col, when, current_date, lit}
+import org.apache.spark.sql.functions.{col, when, current_date, lit, to_json, collect_list, struct}
 import org.apache.spark.sql.expressions.Window
 import org.apache.spark.sql.functions.avg
 
@@ -21,7 +21,7 @@ object Recommendations {
 
     // Logique de recommandation
     val recommendationDf = movingAvg.withColumn(
-      "Recommendation",
+      "Action",
       when(
         $"Close" > $"MovingAvg_Close" * 1.01,
         "buy"
@@ -41,20 +41,23 @@ object Recommendations {
     }
 
     // Sélectionner les colonnes pertinentes
-    val resultDf =
-      finalDf.select("Date", "Close", "MovingAvg_Close", "Recommendation")
+    val resultDf = finalDf.select("Date", "Close", "MovingAvg_Close", "Action")
 
     // Afficher les résultats
-    println(s"=== Recommandations (${if (onlyToday) "date du jour"
-      else "toutes les dates"}) ===")
+    println(s"=== Recommandations (${if (onlyToday) "date du jour" else "toutes les dates"}) ===")
     resultDf.show()
 
-    // Écrire les résultats en JSON
-    resultDf.write
+    // Créer un JSON regroupé
+    val jsonDf = resultDf
+      .select(struct("Date", "Close", "MovingAvg_Close", "Action").as("data"))
+      .agg(collect_list("data").as("recommendations"))
+      .select(to_json(struct("recommendations")).as("json"))
+
+    // Écrire le JSON dans un fichier
+    jsonDf.write
       .mode("overwrite")
-      .json(outputPath)
+      .text(outputPath)
 
     println(s"Résultats écrits dans $outputPath")
   }
 }
-
