@@ -56,6 +56,11 @@ object Main {
     println("=== Variation quotidienne (%) du prix de clôture ===")
     percentChange.select("Date", "Close", "PrevClose", "Pct_Change").show(20)
 
+    df.createOrReplaceTempView("stocks")
+
+    val result = spark.sql("SELECT * FROM stocks WHERE Close > Open")
+    result.show()
+
     spark.stop()
   }
 }
