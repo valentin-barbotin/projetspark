@@ -7,7 +7,7 @@ object Main {
       .master("local[*]")
       .getOrCreate()
 
-    val csvPath = "seattle-weather.csv"
+    val csvPath = "dataset.csv"
 
     val df = spark.read
       .option("header", "true")
