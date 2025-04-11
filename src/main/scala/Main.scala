@@ -46,6 +46,14 @@ object Main {
     println("=== Volatilité (High - Low) ===")
     volatility.select("Date", "High", "Low", "Volatility").show(20)
 
+    // Détection des jours où la bourse stagne (variation faible entre High et Low)
+    val stagnationThreshold = 0.5 // seuil de 0.5%
+    val stagnantDays = cleanedDf.withColumn("Stagnation", ($"High" - $"Low") / $"Low" * 100)
+      .filter($"Stagnation" < stagnationThreshold)
+
+    println("=== Jours de stagnation ===")
+    stagnantDays.select("Date", "High", "Low", "Stagnation").show()
+
     // Jour avec le plus grand volume
     val maxVolumeDay = cleanedDf.orderBy($"Volume".desc).limit(1)
     println("=== Jour avec le plus grand volume ===")
