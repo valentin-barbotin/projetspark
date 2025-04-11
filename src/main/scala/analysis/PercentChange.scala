@@ -5,7 +5,8 @@ import org.apache.spark.sql.expressions.Window
 import org.apache.spark.sql.functions.lag
 
 object PercentChange {
-  def compute(df: DataFrame): Unit = {
+  def compute(df: DataFrame)(implicit spark: org.apache.spark.sql.SparkSession): Unit = {
+    import spark.implicits._ 
     val windowSpec = Window.orderBy("Date")
     val percentChange = df.withColumn("PrevClose", lag("Close", 1).over(windowSpec))
       .withColumn("Pct_Change", (($"Close" - $"PrevClose") / $"PrevClose") * 100)

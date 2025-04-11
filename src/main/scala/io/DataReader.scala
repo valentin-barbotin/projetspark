@@ -5,6 +5,7 @@ import org.apache.spark.sql.functions.{to_date}
 
 object DataReader {
   def readCsv(spark: SparkSession, path: String): DataFrame = {
+    import spark.implicits._ 
     spark.read
       .option("header", "true")
       .option("inferSchema", "true")

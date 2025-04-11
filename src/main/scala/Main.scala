@@ -25,12 +25,12 @@ object Main {
 
     // Analyses
     MovingAverage.compute(spark, cleanedDf)
-    Volatility.compute(cleanedDf)
-    Stagnation.compute(cleanedDf)
-    VolumeAnalysis.compute(cleanedDf)
-    BullishDays.compute(cleanedDf)
-    PercentChange.compute(cleanedDf)
-    Extremes.compute(cleanedDf)
+    Volatility.compute(cleanedDf)(spark) 
+    Stagnation.compute(cleanedDf)(spark) 
+    VolumeAnalysis.compute(cleanedDf)(spark)
+    BullishDays.compute(cleanedDf)(spark)
+    PercentChange.compute(cleanedDf)(spark)
+    Extremes.compute(cleanedDf)(spark)
 
     // Exemple de requête SQL
     cleanedDf.createOrReplaceTempView("stocks")
@@ -42,4 +42,3 @@ object Main {
     spark.stop()
   }
 }
-
