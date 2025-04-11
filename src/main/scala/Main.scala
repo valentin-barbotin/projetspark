@@ -1,3 +1,4 @@
+import org.apache.log4j.{Level, Logger}
 import org.apache.spark.sql.{SparkSession, functions => F}
 import org.apache.spark.sql.expressions.Window
 
@@ -9,6 +10,9 @@ object Main {
       .getOrCreate()
 
     import spark.implicits._
+
+    Logger.getLogger("org").setLevel(Level.ERROR)
+    spark.sparkContext.setLogLevel("ERROR")
 
     val csvPath = "dataset.csv"
 
