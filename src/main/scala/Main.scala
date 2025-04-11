@@ -4,14 +4,19 @@ import com.example.config.SparkConfig
 import com.example.io.DataReader
 import com.example.transformations.DataCleaner
 import com.example.analysis._
+import org.apache.log4j.{Level, Logger}
+import org.apache.spark.sql.{SparkSession, functions => F}
+import org.apache.spark.sql.expressions.Window
 
 object Main {
   def main(args: Array[String]): Unit = {
     // Initialisation de Spark
     val spark = SparkConfig.createSparkSession()
     import spark.implicits._
-
     // Lecture des données
+    Logger.getLogger("org").setLevel(Level.ERROR)
+    spark.sparkContext.setLogLevel("ERROR")
+
     val csvPath = "dataset.csv"
     val df = DataReader.readCsv(spark, csvPath)
 
