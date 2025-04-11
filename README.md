@@ -24,14 +24,22 @@ Projet Spark est [insérer une description plus détaillée du projet, ses objec
     ```bash
     cd projet-spark
     ```
-3. Installez les dépendances :
+3. Compilez le projet avec Maven :
     ```bash
-    [insérer la commande d'installation, ex. npm install, pip install -r requirements.txt]
+    mvn clean install
     ```
 
 ## Utilisation
 
-[Expliquez comment utiliser le projet, fournissez des exemples ou des commandes.]
+Pour préparer le projet pour l'exécution, empaquetez-le avec Maven :
+```bash
+mvn package
+```
+
+Ensuite, exécutez le projet avec la commande suivante :
+```bash
+spark-submit --class Main --master 'local[*]' target/spark-scala-app-1.0-SNAPSHOT.jar
+```
 
 ## Contribuer
 
@@ -54,4 +62,4 @@ Les contributions sont les bienvenues ! Veuillez suivre ces étapes :
 
 ## Licence
 
-Ce projet est sous licence [insérer le type de licence]. Consultez le fichier `LICENSE` pour plus d'informations.
+Ce projet est sous licence MIT. Consultez le fichier `LICENSE` pour plus d'informations.
