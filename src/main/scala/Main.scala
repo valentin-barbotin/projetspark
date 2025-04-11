@@ -1,21 +1,17 @@
 package com.example
 
-import com.example.analysis._
 import com.example.config.SparkConfig
 import com.example.io.DataReader
 import com.example.transformations.DataCleaner
-import org.apache.log4j.{Level, Logger}
-import org.apache.spark.sql.{SparkSession, functions => F}
+import com.example.analysis._
 
 object Main {
   def main(args: Array[String]): Unit = {
     // Initialisation de Spark
     val spark = SparkConfig.createSparkSession()
     import spark.implicits._
-    // Lecture des données
-    Logger.getLogger("org").setLevel(Level.ERROR)
-    spark.sparkContext.setLogLevel("ERROR")
 
+    // Lecture des données
     val csvPath = "dataset.csv"
     val df = DataReader.readCsv(spark, csvPath)
 
@@ -29,12 +25,18 @@ object Main {
 
     // Analyses
     MovingAverage.compute(spark, cleanedDf)
-    Volatility.compute(cleanedDf)(spark) 
-    Stagnation.compute(cleanedDf)(spark) 
+    Volatility.compute(cleanedDf)(spark)
+    Stagnation.compute(cleanedDf)(spark)
     VolumeAnalysis.compute(cleanedDf)(spark)
     BullishDays.compute(cleanedDf)(spark)
     PercentChange.compute(cleanedDf)(spark)
     Extremes.compute(cleanedDf)(spark)
+
+    // Recommandations (toutes les dates)
+    Recommendations.compute(cleanedDf, "output/recommendations_all.json")(spark)
+
+    // Recommandations (seulement la date du jour)
+    Recommendations.compute(cleanedDf, "output/recommendations_today.json", onlyToday = true)(spark)
 
     // Exemple de requête SQL
     cleanedDf.createOrReplaceTempView("stocks")
